@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
-import Landing from './pages/landing';
+import Landing from './pages/Landing.jsx';
 import CardDetails from './pages/CardDetails';
 import { createContext } from 'react';
 import SetTicketNumber from './pages/SetTicketNumber';
