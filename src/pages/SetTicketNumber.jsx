@@ -1,12 +1,10 @@
-import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
-import React, { useState } from 'react';
-import NumberTable from '../components/NumberTable';
+import { Box, Button, Grid, Typography } from '@mui/material';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from '../App';
 import LottoCard from '../components/LottoCard';
 
 const SetTicketNumber = () => {
-  const [open, setOpen] = useState(false);
-  const [severity, setSeverity] = useState('success');
-  const [message, setMessage] = useState('Successfully Purchased!');
+  const { cards } = useContext(AppContext);
   const [selectedNumber, setSelectedNumber] = useState([
     '',
     '',
@@ -15,19 +13,32 @@ const SetTicketNumber = () => {
     '',
     '',
   ]);
+  const [showAvailableTickets, setShowAvailableTickets] = useState();
 
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') return; // optional: ignore clickaway
-    setOpen(false);
-  };
+  useEffect(() => {
+    /* to match all the index with same value */
+    const filtered = cards.filter((item) =>
+      item.number.every(
+        (val, idx) => selectedNumber[idx] === '' || val == selectedNumber[idx]
+      )
+    );
+
+    /* To get atleast one number match with the same index */
+    // const filtered = cards.filter((item) =>
+    //   item.number.some(
+    //     (val, idx) => selectedNumber[idx] != '' && val == selectedNumber[idx]
+    //   )
+    // );
+    setShowAvailableTickets(filtered);
+  }, [selectedNumber]);
 
   return (
     <Box mb={5}>
       <Typography
-        mt='20px'
         variant='body1'
-        fontFamily='bold'
+        fontWeight='bold'
         textAlign='center'
+        mt='20px'
       >
         Choose Lotto Number
       </Typography>
@@ -38,10 +49,13 @@ const SetTicketNumber = () => {
           buy='10'
           date='10 Jul 2025'
           number={selectedNumber}
+          numberClickable={true}
+          setNumber={setSelectedNumber}
           name='Lotto'
+          click={false}
         />
       </Box>
-      <NumberTable setSelectedNumber={setSelectedNumber} />
+      {/* <NumberTable setSelectedNumber={setSelectedNumber} /> */}
       <Box
         mt={2}
         display='flex'
@@ -55,37 +69,61 @@ const SetTicketNumber = () => {
         >
           Remove All
         </Button>
-        <Button
-          variant='contained'
-          onClick={() => {
-            setSeverity(selectedNumber.includes('') ? 'error' : 'success');
-            setMessage(
-              selectedNumber.includes('')
-                ? 'Please select all numbers'
-                : 'Successfully Purchased'
-            );
-            setOpen(true);
-          }}
-        >
-          Buy
-        </Button>
       </Box>
-      <Snackbar
-        open={open}
-        autoHideDuration={4000}
-        onClose={handleClose}
+      {showAvailableTickets == undefined ||
+      showAvailableTickets?.length == 0 ? (
+        selectedNumber.some((num) => num !== '') ? (
+          <Typography>
+            Ticket is Not Available. Please try with different number
+          </Typography>
+        ) : null
+      ) : (
+        selectedNumber.some((num) => num !== '') && (
+          <Box sx={{ ml: '20px' }}>
+            <Typography
+              variant='body1'
+              fontWeight='bold'
+              textAlign='center'
+              my={4}
+            >
+              Available Tickets
+            </Typography>
+            <Grid
+              container
+              gap={3}
+            >
+              {showAvailableTickets.map((ticket, index) => {
+                return (
+                  <LottoCard
+                    key={index}
+                    ticketId={ticket.ticketId}
+                    prize={ticket.prize}
+                    buy={ticket.buy}
+                    date={ticket.date}
+                    number={ticket.number}
+                    name={ticket.name}
+                    click={true}
+                  />
+                );
+              })}
+            </Grid>
+          </Box>
+        )
+      )}
+      {/* <Button
+        variant='contained'
+        onClick={() => {
+          setSeverity(selectedNumber.includes('') ? 'error' : 'success');
+          setMessage(
+            selectedNumber.includes('')
+              ? 'Please select all numbers'
+              : 'Successfully Purchased'
+          );
+          setOpen(true);
+        }}
       >
-        <Alert
-          severity={severity}
-          variant='filled'
-          icon={false}
-        >
-          {message}
-          {/* {selectedNumber.includes('')
-            ? 'Please select all numbers'
-            : 'Successfully Purchased !'} */}
-        </Alert>
-      </Snackbar>
+        Buy
+      </Button> */}
     </Box>
   );
 };

@@ -29,6 +29,7 @@ const Landing = () => {
               number={card.number}
               name={card.name}
               key={index}
+              click={true}
             />
           );
         })}
