@@ -1,6 +1,5 @@
-import { TextField } from '@mui/material';
+import { FormControl, MenuItem, Select, Typography } from '@mui/material';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import ICSol from '../assets/icons/IcSol';
 import './LottoCard.css';
 
@@ -13,24 +12,39 @@ const LottoCard = ({
   setNumber,
   name = 'name',
   numberClickable = false,
-  click = true,
+  onClick,
 }) => {
-  const navigate = useNavigate();
-
-  const handleChange = (index, newValue) => {
+  const handleChange = (newValue, index) => {
     const updated = [...number];
     // Allow empty or valid number strings
     updated[index] = newValue;
     setNumber(updated);
   };
 
+  const availableNumbers = [
+    'B1',
+    'CD',
+    '43',
+    '44',
+    '45',
+    '46',
+    '47',
+    '48',
+    '49',
+    '4A',
+    '4B',
+    '4C',
+    '4D',
+    '4E',
+    '4F',
+    '50',
+  ];
+
   return (
     <div
       className='ticket2'
       style={{ cursor: 'pointer' }}
-      onClick={() => {
-        click ? navigate(`/card/${ticketId}/buy`) : '';
-      }}
+      onClick={onClick}
     >
       <div className='ticket2-header'>{name}</div>
       <div className='ticket2-info'>
@@ -76,43 +90,54 @@ const LottoCard = ({
         }}
       ></div>
       <div className='numbers2'>
-        {number.map((num, index) => {
-          return (
-            <TextField
-              className='number2'
-              key={index}
-              value={num}
-              onChange={(e) => {
-                e.stopPropagation();
-                const input = e.target.value;
-                if (/^\d{0,2}$/.test(input)) {
-                  handleChange(index, input); // Keep it as string
-                }
-              }}
-              slotProps={{
-                input: {
-                  readOnly: !numberClickable,
-                },
-              }}
-              inputMode='numeric'
-              size='medium'
-              type='text'
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': {
-                    border: 'none', // Remove default border
-                  },
-                  '&:hover fieldset': {
-                    border: 'none', // Remove border on hover
-                  },
-                  '&.Mui-focused fieldset': {
-                    border: 'none', // Remove border on focus
-                  },
-                },
-              }}
-            />
-          );
-        })}
+        {numberClickable
+          ? number.map((num, index) => {
+              return (
+                <FormControl key={index}>
+                  <Select
+                    value={num}
+                    className='number2'
+                    onChange={(event) => {
+                      handleChange(event.target.value, index);
+                      // console.log(event.target.value, `index:${index}`);
+                    }}
+                    sx={{ padding: '0px', borderRadius: '50%' }}
+                    IconComponent={() => null}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          marginTop: '5px',
+                          // width: 20,
+                          overflowY: 'auto',
+                          scrollbarWidth: 'thin',
+                          maxHeight: 200,
+                        },
+                      },
+                    }}
+                  >
+                    {availableNumbers.map((availableNum) => (
+                      <MenuItem
+                        key={availableNum}
+                        value={availableNum}
+                        // style={getStyles(availableNum, personName, theme)}
+                      >
+                        {availableNum}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              );
+            })
+          : number.map((num, index) => {
+              return (
+                <Typography
+                  className='number2'
+                  key={index}
+                >
+                  {num}
+                </Typography>
+              );
+            })}
       </div>
 
       <div className='ticket2-footer'>

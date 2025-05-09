@@ -5,17 +5,21 @@ import Landing from './pages/Landing.jsx';
 import CardDetails from './pages/CardDetails';
 import { createContext } from 'react';
 import SetTicketNumber from './pages/SetTicketNumber';
+import { getRandomDigitsFromArray } from './generals.js';
+import { hex256Numbers } from './hex256.js';
+import SearchTicket from './pages/SearchTicket.jsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext();
 
 function App() {
+  /* cards object */
   const cards = [
     {
       name: 'Lotto1',
       prize: 1000,
       buy: 10,
-      number: [11, 21, 31, 41, 51, 61],
+      number: getRandomDigitsFromArray(hex256Numbers),
       date: '01 Jul 2025',
       ticketId: 'CB1041',
       purchase: false,
@@ -24,7 +28,7 @@ function App() {
       name: 'Lotto2',
       prize: 2000,
       buy: 20,
-      number: [12, 22, 32, 42, 52, 62],
+      number: getRandomDigitsFromArray(hex256Numbers),
       date: '02 Jul 2025',
       ticketId: 'CB1042',
       purchase: false,
@@ -33,7 +37,7 @@ function App() {
       name: 'Lotto3',
       prize: 3000,
       buy: 30,
-      number: [13, 23, 33, 43, 53, 63],
+      number: getRandomDigitsFromArray(hex256Numbers),
       date: '03 Jul 2025',
       ticketId: 'CB1043',
       purchase: false,
@@ -42,7 +46,7 @@ function App() {
       name: 'Lotto4',
       prize: 4000,
       buy: 40,
-      number: [14, 24, 34, 44, 54, 64],
+      number: getRandomDigitsFromArray(hex256Numbers),
       date: '04 Jul 2025',
       ticketId: 'CB1044',
       purchase: false,
@@ -51,9 +55,27 @@ function App() {
       name: 'Lotto5',
       prize: 5000,
       buy: 50,
-      number: [15, 25, 35, 45, 55, 65],
+      number: getRandomDigitsFromArray(hex256Numbers),
       date: '05 Jul 2025',
       ticketId: 'CB1045',
+      purchase: false,
+    },
+    {
+      name: 'Luxe Lotto',
+      prize: 10000,
+      buy: 100,
+      number: getRandomDigitsFromArray(hex256Numbers),
+      date: '05 Jul 2025',
+      ticketId: 'CB1045',
+      purchase: false,
+    },
+    {
+      name: 'Luxe Ticket',
+      prize: 10000,
+      buy: 100,
+      number: getRandomDigitsFromArray(hex256Numbers),
+      date: '05 Jul 2025',
+      ticketId: 'CB1049',
       purchase: false,
     },
   ];
@@ -74,6 +96,10 @@ function App() {
           <Route
             path='/search/ticket'
             element={<SetTicketNumber />}
+          />
+          <Route
+            path='/ticket/card'
+            element={<SearchTicket />}
           />
         </Routes>
       </Box>
