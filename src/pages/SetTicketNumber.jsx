@@ -4,10 +4,12 @@ import { AppContext } from '../App';
 import LottoCard from '../components/LottoCard';
 import { useNavigate } from 'react-router-dom';
 import { hex256Numbers } from '../hex256';
+import { getRandomString } from '../generals';
 
 const SetTicketNumber = () => {
   const { cards } = useContext(AppContext);
   const navigate = useNavigate();
+  const [mainCardName, setMainCardName] = useState('Luxe Lotto');
   const [selectedNumber, setSelectedNumber] = useState([
     '',
     '',
@@ -25,6 +27,17 @@ const SetTicketNumber = () => {
     '',
     '',
   ]);
+  const names = [
+    'Lucky Picks',
+    'Golden Numbers',
+    'Treasure Tickets',
+    'Luxe Lotto',
+    'Jackpot Royale',
+  ];
+
+  useEffect(() => {
+    setMainCardName(getRandomString(names));
+  }, []);
 
   useEffect(() => {
     /* to match all the index with same value */
@@ -35,7 +48,6 @@ const SetTicketNumber = () => {
     );
 
     /* To get at least one number match with the same index */
-
     // const filtered = cards.filter((item) =>
     //   item.number.some(
     //     (val, idx) => selectedNumber[idx] != '' && val == selectedNumber[idx]
@@ -76,7 +88,8 @@ const SetTicketNumber = () => {
         textAlign='center'
         mt='20px'
       >
-        Choose Lotto Number
+        Number Availability Checker
+        {/* Check Desired Number */}
       </Typography>
       <Box
         sx={{ display: 'flex', justifyContent: 'center', mt: '20px', gap: 3 }}
@@ -89,7 +102,7 @@ const SetTicketNumber = () => {
           number={selectedNumber}
           numberClickable={true}
           setNumber={setSelectedNumber}
-          name='Luxe Lotto'
+          name={mainCardName}
           click={false}
         />
         {/* <LottoCard
@@ -113,6 +126,7 @@ const SetTicketNumber = () => {
         {selectedNumber.some((num) => num !== '') && (
           <Button
             variant='contained'
+            sx={{ background: '#7c4ef7' }}
             onClick={() => {
               setSelectedNumber(['', '', '', '', '', '']);
             }}
@@ -131,7 +145,7 @@ const SetTicketNumber = () => {
               buy='10'
               date='10 Jul 2025'
               number={randomSelectedNumber}
-              name='Luxe Lotto'
+              name={mainCardName}
               click={true}
               onClick={() => {
                 navigate('/ticket/card', {
@@ -141,7 +155,7 @@ const SetTicketNumber = () => {
                     buy: '10',
                     date: '10 Jul 2025,',
                     number: randomSelectedNumber,
-                    name: 'Luxe Lotto',
+                    name: mainCardName,
                   },
                 });
               }}
@@ -186,6 +200,7 @@ const SetTicketNumber = () => {
       )}
       {/* <Button
         variant='contained'
+        sx={{ background: '#7c4ef7' }}
         onClick={() => {
           setSeverity(selectedNumber.includes('') ? 'error' : 'success');
           setMessage(

@@ -50,6 +50,7 @@ const SearchTicket = () => {
       >
         <Button
           variant='contained'
+          sx={{ backgroundColor: '#7c4ef7' }}
           onClick={() => {
             handleClick();
             console.log('successfully purchased');

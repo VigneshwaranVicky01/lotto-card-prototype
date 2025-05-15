@@ -5,7 +5,11 @@ import Landing from './pages/Landing.jsx';
 import CardDetails from './pages/CardDetails';
 import { createContext } from 'react';
 import SetTicketNumber from './pages/SetTicketNumber';
-import { getRandomDigitsFromArray } from './generals.js';
+import {
+  getRandomDigitsFromArray,
+  getRandomString,
+  names,
+} from './generals.js';
 import { hex256Numbers } from './hex256.js';
 import SearchTicket from './pages/SearchTicket.jsx';
 
@@ -16,7 +20,7 @@ function App() {
   /* cards object */
   const cards = [
     {
-      name: 'Lotto1',
+      name: getRandomString(names),
       prize: 1000,
       buy: 10,
       number: getRandomDigitsFromArray(hex256Numbers),
@@ -25,7 +29,7 @@ function App() {
       purchase: false,
     },
     {
-      name: 'Lotto2',
+      name: getRandomString(names),
       prize: 2000,
       buy: 20,
       number: getRandomDigitsFromArray(hex256Numbers),
@@ -34,7 +38,7 @@ function App() {
       purchase: false,
     },
     {
-      name: 'Lotto3',
+      name: getRandomString(names),
       prize: 3000,
       buy: 30,
       number: getRandomDigitsFromArray(hex256Numbers),
@@ -43,7 +47,7 @@ function App() {
       purchase: false,
     },
     {
-      name: 'Lotto4',
+      name: getRandomString(names),
       prize: 4000,
       buy: 40,
       number: getRandomDigitsFromArray(hex256Numbers),
@@ -52,7 +56,7 @@ function App() {
       purchase: false,
     },
     {
-      name: 'Lotto5',
+      name: getRandomString(names),
       prize: 5000,
       buy: 50,
       number: getRandomDigitsFromArray(hex256Numbers),
@@ -61,7 +65,7 @@ function App() {
       purchase: false,
     },
     {
-      name: 'Luxe Lotto',
+      name: getRandomString(names),
       prize: 10000,
       buy: 100,
       number: getRandomDigitsFromArray(hex256Numbers),
@@ -70,7 +74,7 @@ function App() {
       purchase: false,
     },
     {
-      name: 'Luxe Ticket',
+      name: getRandomString(names),
       prize: 10000,
       buy: 100,
       number: getRandomDigitsFromArray(hex256Numbers),

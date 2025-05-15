@@ -17,9 +17,10 @@ const Landing = () => {
       <Typography
         variant='body1'
         fontWeight='bold'
-        sx={{ mb: '15px' }}
+        textAlign='center'
+        sx={{ mb: '20px' }}
       >
-        Lottery
+        Available Lottery Tickets
       </Typography>
       <Grid
         container

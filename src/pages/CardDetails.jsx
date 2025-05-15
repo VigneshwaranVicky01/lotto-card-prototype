@@ -60,6 +60,7 @@ const CardDetails = () => {
           >
             <Button
               variant='contained'
+              sx={{ background: '#7c4ef7' }}
               onClick={() => {
                 handleClick();
                 console.log('successfully purchased');
@@ -79,6 +80,7 @@ const CardDetails = () => {
           <Typography variant='subtitle2'>Ticket Not Found</Typography>
           <Button
             variant='contained'
+            sx={{ background: '#7c4ef7' }}
             onClick={() => {
               navigate('/');
             }}
