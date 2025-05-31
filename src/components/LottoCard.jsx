@@ -18,6 +18,7 @@ const LottoCard = ({
     const updated = [...number];
     // Allow empty or valid number strings
     updated[index] = newValue;
+    // setNumber(ticketId, updated);
     setNumber(updated);
   };
 

@@ -1,15 +1,14 @@
 import { Box, Button, Grid, Typography } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
 import LottoCard from '../components/LottoCard';
-import { useNavigate } from 'react-router-dom';
 import { hex256Numbers } from '../hex256';
-import { getRandomString } from '../generals';
 
 const SetTicketNumber = () => {
   const { cards } = useContext(AppContext);
   const navigate = useNavigate();
-  const [mainCardName, setMainCardName] = useState('Luxe Lotto');
+  const [mainCardName, setMainCardName] = useState('Lucky Picks');
   const [selectedNumber, setSelectedNumber] = useState([
     '',
     '',
@@ -18,6 +17,7 @@ const SetTicketNumber = () => {
     '',
     '',
   ]);
+
   const [showAvailableTickets, setShowAvailableTickets] = useState();
   const [randomSelectedNumber, setRandomSelectedNumber] = useState([
     '',
@@ -27,17 +27,6 @@ const SetTicketNumber = () => {
     '',
     '',
   ]);
-  const names = [
-    'Lucky Picks',
-    'Golden Numbers',
-    'Treasure Tickets',
-    'Luxe Lotto',
-    'Jackpot Royale',
-  ];
-
-  useEffect(() => {
-    setMainCardName(getRandomString(names));
-  }, []);
 
   useEffect(() => {
     /* to match all the index with same value */
@@ -78,10 +67,76 @@ const SetTicketNumber = () => {
     setRandomSelectedNumber(filledArr);
   }, [selectedNumber, showAvailableTickets]);
 
+  const listSearchCards = [
+    {
+      ticketId: 'CB1049',
+      prize: '1000',
+      buy: '10',
+      date: '10 Jul 2025',
+      number: selectedNumber,
+      numberClickable: true,
+      // setNumber: (ticketId, number) => {
+      //   console.log(ticketId, number);
+      // },
+      setNumber: setSelectedNumber,
+      name: 'Lucky Picks',
+      click: false,
+    },
+    {
+      ticketId: 'CB1048',
+      prize: '100',
+      buy: '1',
+      date: '10 Sep 2025',
+      number: ['', '', '', '', '', ''],
+      numberClickable: true,
+      setNumber: (ticketId, number) => {
+        console.log(ticketId, number);
+      },
+      name: 'Golden Numbers',
+      click: false,
+    },
+    {
+      ticketId: 'CB1050',
+      prize: '5000',
+      buy: '5',
+      date: '10 Aug 2025',
+      number: ['', '', '', '', '', ''],
+      numberClickable: true,
+      setNumber: setSelectedNumber,
+      name: 'Treasure Tickets',
+      click: false,
+    },
+    {
+      ticketId: 'CB1052',
+      prize: '6000',
+      buy: '6',
+      date: '11 Jul 2025',
+      number: ['', '', '', '', '', ''],
+      numberClickable: true,
+      setNumber: setSelectedNumber,
+      name: 'Luxe Lotto',
+      click: false,
+    },
+    {
+      ticketId: 'CB1051',
+      prize: '4500',
+      buy: '4',
+      date: '18 Aug 2025',
+      number: ['', '', '', '', '', ''],
+      numberClickable: true,
+      setNumber: setSelectedNumber,
+      name: 'Jackpot Royale',
+      click: false,
+    },
+  ];
+
   // Replace empty values with random values from `choices`
 
   return (
-    <Box mb={5}>
+    <Box
+      mb={5}
+      width='100%'
+    >
       <Typography
         variant='body1'
         fontWeight='bold'
@@ -92,38 +147,41 @@ const SetTicketNumber = () => {
         {/* Check Desired Number */}
       </Typography>
       <Box
-        sx={{ display: 'flex', justifyContent: 'center', mt: '20px', gap: 3 }}
+        width='100%'
+        overflow='scroll'
+        display='flex'
+        gap={3}
+        mt={3}
       >
-        <LottoCard
-          ticketId='CB1049'
-          prize='1000'
-          buy='10'
-          date='10 Jul 2025'
-          number={selectedNumber}
-          numberClickable={true}
-          setNumber={setSelectedNumber}
-          name={mainCardName}
-          click={false}
-        />
-        {/* <LottoCard
-          ticketId='CB1049'
-          prize='1000'
-          buy='10'
-          date='10 Jul 2025'
-          number={selectedNumber}
-          numberClickable={true}
-          setNumber={setSelectedNumber}
-          name='Treasure Ticket'
-          click={false}
-        /> */}
+        {listSearchCards.map((searchCard, index) => {
+          return (
+            <Box
+              width='350px'
+              key={index}
+            >
+              <LottoCard
+                ticketId={searchCard.ticketId}
+                prize={searchCard.prize}
+                buy={searchCard.buy}
+                date={searchCard.date}
+                number={searchCard.number}
+                numberClickable={true}
+                setNumber={searchCard.setNumber}
+                name={searchCard.name}
+                click={false}
+              />
+            </Box>
+          );
+        })}
       </Box>
+
       {/* <NumberTable setSelectedNumber={setSelectedNumber} /> */}
       <Box
         mt={2}
         display='flex'
         justifyContent='space-evenly'
       >
-        {selectedNumber.some((num) => num !== '') && (
+        {selectedNumber?.some((num) => num !== '') && (
           <Button
             variant='contained'
             sx={{ background: '#7c4ef7' }}
@@ -135,9 +193,10 @@ const SetTicketNumber = () => {
           </Button>
         )}
       </Box>
+
       {showAvailableTickets == undefined ||
       showAvailableTickets?.length == 0 ? (
-        selectedNumber.some((num) => num !== '') ? (
+        selectedNumber?.some((num) => num !== '') ? (
           <Box mt={4}>
             <LottoCard
               ticketId='CB1049'
