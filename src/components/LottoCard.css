@@ -1,7 +1,7 @@
 .ticket2 {
   position: relative;
   background: #2a2b3f;
-  width: 310px;
+  width: 290px;
   padding: 12px;
   border-radius: 16px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
@@ -18,8 +18,8 @@
   height: 30px;
   background: #1c1d31;
   border-radius: 50%;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 45%;
+  transform: translateY(-45%);
   z-index: 1;
 }
 
@@ -66,7 +66,7 @@
 .numbers2 {
   display: flex;
   justify-content: space-between;
-  margin: 20px 0;
+  margin: 15px 0;
 }
 
 .number2 {
@@ -87,5 +87,4 @@
   text-align: center;
   font-size: 12px;
   color: #888;
-  margin-top: 10px;
 }
