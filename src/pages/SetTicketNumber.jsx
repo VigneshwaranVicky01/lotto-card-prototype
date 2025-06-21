@@ -60,12 +60,13 @@ const SetTicketNumber = () => {
       });
     });
 
-    let filledArr = selectedNumber.numbers.map((v) => {
-      if (v == '') {
-        return getRandomFromChoices(hex256Numbers);
-      }
-      return v;
-    });
+    // let filledArr = selectedNumber.numbers.map((v) => {
+    //   if (v == '') {
+    //     return getRandomFromChoices(hex256Numbers);
+    //   }
+    //   return v;
+    // });
+
     setRandomSelectedNumber(() => ({
       title: selectedNumber?.title,
       ticketId: selectedNumber?.ticketId,
@@ -195,7 +196,7 @@ const SetTicketNumber = () => {
       </Box>
 
       {/* <NumberTable setSelectedNumber={setSelectedNumber} /> */}
-      {/* <Box
+      <Box
         mt={2}
         display='flex'
         justifyContent='space-evenly'
@@ -205,14 +206,17 @@ const SetTicketNumber = () => {
             variant='contained'
             sx={{ background: '#7c4ef7' }}
             onClick={() => {
-              setSelectedNumber(['', '', '', '', '', '']);
+              setSelectedNumber(() => ({
+                title: '',
+                ticketId: '',
+                numbers: ['', '', '', '', '', ''],
+              }));
             }}
           >
             Remove All
           </Button>
         )}
-      </Box> */}
-
+      </Box>
       {showAvailableTickets == undefined ||
       showAvailableTickets?.length == 0 ? (
         selectedNumber?.numbers?.some((num) => num !== '') ? (
@@ -269,9 +273,9 @@ const SetTicketNumber = () => {
                 (item) => item.ticketId === randomSelectedNumber.ticketId
               );
               return (
-                <>
+                <Box key={index}>
                   <Box
-                    class='numbers2'
+                    className='numbers2'
                     sx={{ cursor: 'pointer' }}
                     onClick={() => {
                       navigate('/ticket/card', {
@@ -288,14 +292,9 @@ const SetTicketNumber = () => {
                   >
                     {set.map((num, index) => {
                       return (
-                        <>
-                          <Typography
-                            className='number2'
-                            key={index}
-                          >
-                            {num}
-                          </Typography>
-                        </>
+                        <Box key={index}>
+                          <Typography className='number2'>{num}</Typography>
+                        </Box>
                       );
                     })}
                   </Box>
@@ -308,7 +307,7 @@ const SetTicketNumber = () => {
                       }}
                     />
                   )}
-                </>
+                </Box>
                 // <LottoCard
                 //   // key={index}
                 //   ticketId='CB1049'
@@ -336,7 +335,7 @@ const SetTicketNumber = () => {
           </Box>
         ) : null
       ) : (
-        selectedNumber.some((num) => num !== '') && (
+        selectedNumber?.numbers.some((num) => num !== '') && (
           <Box sx={{ ml: '20px' }}>
             <Typography
               variant='body1'
@@ -350,7 +349,7 @@ const SetTicketNumber = () => {
               container
               gap={3}
             >
-              {showAvailableTickets.map((ticket, index) => {
+              {showAvailableTickets?.map((ticket, index) => {
                 return (
                   <LottoCard
                     key={index}

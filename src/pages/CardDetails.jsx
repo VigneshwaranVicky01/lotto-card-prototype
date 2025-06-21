@@ -1,9 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
 import LottoCard from '../components/LottoCard';
 import { AppContext } from '../App';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import {
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+} from '@solana/web3.js';
 
 const CardDetails = () => {
   const { cards } = useContext(AppContext);
@@ -11,10 +18,49 @@ const CardDetails = () => {
   const [cardDetails, setCardDetails] = useState();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { connection } = useConnection();
+  const { publicKey, sendTransaction } = useWallet();
 
-  const handleClick = () => {
-    setOpen(true);
-  };
+  const handleSend = useCallback(async () => {
+    console.log('first');
+    if (!publicKey) {
+      alert('Please connect your wallet first');
+      return;
+    }
+    console.log('second');
+
+    try {
+      // 📬 Destination address and amount to send
+      const destination = new PublicKey('DESTINATION_WALLET_ADDRESS_HERE');
+      const amount = cardDetails.buy * LAMPORTS_PER_SOL; // 0.1 SOL
+
+      // 🧾 Create transaction
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: publicKey,
+          toPubkey: destination,
+          lamports: amount,
+        })
+      );
+
+      // 🚀 Send transaction (opens wallet popup)
+      const signature = await sendTransaction(transaction, connection);
+
+      console.log('Transaction sent:', signature);
+
+      // ⏳ Wait for confirmation
+      await connection.confirmTransaction(signature, 'confirmed');
+
+      alert('Transaction successful! Signature: ' + signature);
+    } catch (err) {
+      console.error('Transaction failed:', err);
+      alert('Transaction failed!');
+    }
+  }, [publicKey, sendTransaction, connection]);
+
+  // const handleClick = () => {
+  //   setOpen(true);
+  // };
 
   useEffect(() => {
     setCardDetails(cards.find((card) => card.ticketId == id));
@@ -62,8 +108,8 @@ const CardDetails = () => {
               variant='contained'
               sx={{ background: '#7c4ef7' }}
               onClick={() => {
-                handleClick();
-                console.log('successfully purchased');
+                handleSend();
+                // console.log('successfully purchased');
               }}
             >
               Buy

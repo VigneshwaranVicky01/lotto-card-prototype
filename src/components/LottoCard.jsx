@@ -121,7 +121,7 @@ const LottoCard = ({
         {numberClickable
           ? number.map((num, index) => {
               return (
-                <>
+                <div key={index}>
                   <style>
                     {`
           @keyframes jump {
@@ -178,7 +178,7 @@ const LottoCard = ({
                       ))}
                     </Select>
                   </FormControl>
-                </>
+                </div>
               );
             })
           : number.map((num, index) => {
