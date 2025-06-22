@@ -25,6 +25,8 @@ import {
 import { WalletDialogProvider } from './components/WalletDialog.jsx';
 import SendSolDialog from './components/SendSolDialog.jsx';
 import { SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
+import BottomNav from './components/BottomNavigation.jsx';
+import Purchased from './pages/Purchased';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext();
@@ -133,8 +135,13 @@ function App() {
                       path='/ticket/card'
                       element={<SearchTicket />}
                     />
+                    <Route
+                      path='/purchased'
+                      element={<Purchased />}
+                    />
                   </Routes>
                 </Box>
+                <BottomNav />
                 <SendSolDialog />
               </div>
             </WalletModalProvider>
