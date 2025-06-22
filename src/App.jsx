@@ -24,6 +24,7 @@ import {
 } from '@solana/wallet-adapter-react-ui';
 import { WalletDialogProvider } from './components/WalletDialog.jsx';
 import SendSolDialog from './components/SendSolDialog.jsx';
+import { SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext();
@@ -33,13 +34,7 @@ function App() {
 
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
-  const wallets = useMemo(
-    () => [
-      new PhantomWalletAdapter(),
-      // add more adapters if needed
-    ],
-    []
-  );
+  const wallets = [new PhantomWalletAdapter(), new SolflareWalletAdapter()];
 
   /* cards object */
   const cards = [
@@ -114,7 +109,7 @@ function App() {
         <ConnectionProvider endpoint={endpoint}>
           <WalletProvider
             wallets={wallets}
-            autoConnect
+            autoConnect={false}
           >
             <WalletModalProvider>
               <div className='App'>

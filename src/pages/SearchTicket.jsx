@@ -89,7 +89,10 @@ const SearchTicket = () => {
           variant='contained'
           sx={{ backgroundColor: '#7c4ef7' }}
           onClick={() => {
-            showDialog('9NQ9MgmpVe1wrzn5WvXdrxapChTeoQtgbSkHgNpVqRpT', buy);
+            showDialog({
+              address: '9NQ9MgmpVe1wrzn5WvXdrxapChTeoQtgbSkHgNpVqRpT',
+              amount: buy,
+            });
             // console.log('successfully purchased');
           }}
         >

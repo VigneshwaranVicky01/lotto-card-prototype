@@ -1,7 +1,7 @@
-// WalletDialogContext.tsx
-import React, { createContext, useState, useContext } from 'react';
+// WalletDialog.jsx
+import { createContext, useContext, useState } from 'react';
 
-const WalletDialogContext = createContext(null);
+const WalletDialogContext = createContext();
 
 export const useWalletDialog = () => useContext(WalletDialogContext);
 
@@ -10,13 +10,17 @@ export const WalletDialogProvider = ({ children }) => {
   const [targetAddress, setTargetAddress] = useState('');
   const [amount, setAmount] = useState(0);
 
-  const showDialog = (address, amount) => {
+  const showDialog = ({ address, amount }) => {
     setTargetAddress(address);
     setAmount(amount);
     setOpen(true);
   };
 
-  const closeDialog = () => setOpen(false);
+  const closeDialog = () => {
+    setOpen(false);
+    setTargetAddress('');
+    setAmount(0);
+  };
 
   return (
     <WalletDialogContext.Provider
