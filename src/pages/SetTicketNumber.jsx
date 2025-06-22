@@ -16,10 +16,7 @@ const SetTicketNumber = () => {
   });
 
   const [showAvailableTickets, setShowAvailableTickets] = useState();
-  const [randomSelectedNumber, setRandomSelectedNumber] = useState({
-    title: 'Test',
-    numbers: [],
-  });
+  const [randomSelectedNumber, setRandomSelectedNumber] = useState([]);
 
   useEffect(() => {
     /* to match all the index with same value */
@@ -67,11 +64,32 @@ const SetTicketNumber = () => {
     //   return v;
     // });
 
-    setRandomSelectedNumber(() => ({
-      title: selectedNumber?.title,
-      ticketId: selectedNumber?.ticketId,
-      numbers: generatedSets,
-    }));
+    setRandomSelectedNumber((prev) => {
+      const ticketId = selectedNumber?.ticketId;
+      if (!ticketId) {
+        //  Do not add if ticketId is missing or empty
+        return prev;
+      }
+      const existsIndex = prev.findIndex(
+        (item) => item.ticketId === selectedNumber?.ticketId
+      );
+
+      const newEntry = {
+        title: selectedNumber?.title,
+        ticketId: selectedNumber?.ticketId,
+        numbers: generatedSets,
+      };
+
+      if (existsIndex !== -1) {
+        // Update existing entry
+        const updated = [...prev];
+        updated[existsIndex] = newEntry;
+        return updated;
+      } else {
+        // Add new entry
+        return [...prev, newEntry];
+      }
+    });
   }, [selectedNumber, showAvailableTickets]);
 
   const listSearchCards = [
@@ -221,115 +239,144 @@ const SetTicketNumber = () => {
       showAvailableTickets?.length == 0 ? (
         selectedNumber?.numbers?.some((num) => num !== '') ? (
           <Box
-            mt={4}
             sx={{
-              position: 'relative',
-              backgroundColor: '#2a2b3f',
-              width: '310px',
-              padding: '12px',
-              borderRadius: '16px',
-              boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
-              overflow: 'hidden',
-              // Pseudo-elements
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                width: '30px',
-                height: '30px',
-                backgroundColor: '#1c1d31',
-                borderRadius: '50%',
-                top: '55%',
-                transform: 'translateY(-55%)',
-                left: '-10px',
-                zIndex: 1,
+              display: 'flex',
+              flexDirection: 'row',
+              overflowX: 'auto', // 🔑 Enables horizontal scroll
+              gap: 2,
+              mt: 3,
+              pb: 1, // Optional: space for scrollbar
+              '&::-webkit-scrollbar': {
+                height: '6px',
               },
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                width: '30px',
-                height: '30px',
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: '#888',
+                borderRadius: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
                 backgroundColor: '#1c1d31',
-                borderRadius: '50%',
-                top: '55%',
-                transform: 'translateY(-55%)',
-                right: '-10px',
-                zIndex: 1,
               },
             }}
           >
-            <Typography
-              sx={{
-                textAlign: ' center',
-                fontSize: ' 18px',
-                fontWeight: ' bold',
-                color: '#fff',
-                mb: '8px',
-              }}
-            >
-              {randomSelectedNumber.title}
-            </Typography>
-            {randomSelectedNumber?.numbers.map((set, index) => {
-              const result = listSearchCards.find(
-                (item) => item.ticketId === randomSelectedNumber.ticketId
-              );
+            {randomSelectedNumber.map((randomNumber, index) => {
               return (
-                <Box key={index}>
-                  <Box
-                    className='numbers2'
-                    sx={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      navigate('/ticket/card', {
-                        state: {
-                          ticketId: result.ticketId,
-                          prize: result.prize,
-                          buy: result.buy,
-                          date: result.date,
-                          number: set,
-                          name: result.name,
-                        },
-                      });
+                <Box
+                  key={index}
+                  mt={4}
+                  sx={{
+                    position: 'relative',
+                    backgroundColor: '#2a2b3f',
+                    width: '310px',
+                    padding: '8px',
+                    borderRadius: '16px',
+                    boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                    // Pseudo-elements
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      width: '30px',
+                      height: '30px',
+                      backgroundColor: '#1c1d31',
+                      borderRadius: '50%',
+                      top: '55%',
+                      transform: 'translateY(-55%)',
+                      left: '-10px',
+                      zIndex: 1,
+                    },
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      width: '30px',
+                      height: '30px',
+                      backgroundColor: '#1c1d31',
+                      borderRadius: '50%',
+                      top: '55%',
+                      transform: 'translateY(-55%)',
+                      right: '-10px',
+                      zIndex: 1,
+                    },
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      textAlign: ' center',
+                      fontSize: ' 18px',
+                      fontWeight: ' bold',
+                      color: '#fff',
+                      mb: '8px',
                     }}
                   >
-                    {set.map((num, index) => {
-                      return (
-                        <Box key={index}>
-                          <Typography className='number2'>{num}</Typography>
+                    {randomNumber?.title}
+                  </Typography>
+                  {randomNumber?.numbers.map((set, index) => {
+                    const result = listSearchCards.find(
+                      (item) => item.ticketId === randomNumber?.ticketId
+                    );
+                    return (
+                      <Box key={index}>
+                        <Box
+                          className='numbers2'
+                          sx={{ cursor: 'pointer' }}
+                          onClick={() => {
+                            navigate('/ticket/card', {
+                              state: {
+                                ticketId: result.ticketId,
+                                prize: result.prize,
+                                buy: result.buy,
+                                date: result.date,
+                                number: set,
+                                name: result.name,
+                              },
+                            });
+                          }}
+                        >
+                          {set.map((num, index) => {
+                            return (
+                              <Box key={index}>
+                                <Typography className='number2'>
+                                  {num}
+                                </Typography>
+                              </Box>
+                            );
+                          })}
                         </Box>
-                      );
-                    })}
-                  </Box>
-                  {index < 3 && (
-                    <Box
-                      sx={{
-                        borderBottom: '1px dotted #fff',
-                        width: '100%', // or any specific width
-                        my: 1, // margin top & bottom (theme spacing)
-                      }}
-                    />
-                  )}
+                        {index < 3 && (
+                          <Box
+                            sx={{
+                              borderBottom: '1px dotted #fff',
+                              width: '100%', // or any specific width
+                              my: 1, // margin top & bottom (theme spacing)
+                            }}
+                          />
+                        )}
+                      </Box>
+                      // <LottoCard
+                      //   // key={index}
+                      //   ticketId='CB1049'
+                      //   prize='1000'
+                      //   buy='10'
+                      //   date='10 Jul 2025'
+                      //   number={set}
+                      //   name={mainCardName}
+                      //   click={true}
+                      //   onClick={() => {
+                      //     navigate('/ticket/card', {
+                      //       state: {
+                      //         ticketId: 'CB1049',
+                      //         prize: '1000',
+                      //         buy: '10',
+                      //         date: '10 Jul 2025,',
+                      //         number: set,
+                      //         name: mainCardName,
+                      //       },
+                      //     });
+                      //   }}
+                      // />
+                    );
+                  })}
                 </Box>
-                // <LottoCard
-                //   // key={index}
-                //   ticketId='CB1049'
-                //   prize='1000'
-                //   buy='10'
-                //   date='10 Jul 2025'
-                //   number={set}
-                //   name={mainCardName}
-                //   click={true}
-                //   onClick={() => {
-                //     navigate('/ticket/card', {
-                //       state: {
-                //         ticketId: 'CB1049',
-                //         prize: '1000',
-                //         buy: '10',
-                //         date: '10 Jul 2025,',
-                //         number: set,
-                //         name: mainCardName,
-                //       },
-                //     });
-                //   }}
-                // />
               );
             })}
           </Box>

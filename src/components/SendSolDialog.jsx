@@ -26,7 +26,7 @@ const walletOptions = [
 const SendSolDialog = () => {
   const { open, closeDialog, targetAddress, amount } = useWalletDialog();
   const { connection } = useConnection();
-  const { wallet, publicKey, connected, sendTransaction, select, connect } =
+  const { wallets, publicKey, connected, sendTransaction, select, connect } =
     useWallet();
 
   const [selectedWallet, setSelectedWallet] = useState('Phantom');
@@ -40,11 +40,20 @@ const SendSolDialog = () => {
     try {
       setSending(true);
 
+      const selectedWalletObj = wallets.find(
+        (w) => w.adapter.name === selectedWallet
+      );
+
+      //   if (!selectedWalletObj || !selectedWalletObj.adapter.ready) {
+      //     alert(
+      //       `${selectedWallet} wallet is not ready. Please refresh or reinstall.`
+      //     );
+      //     return;
+      //   }
       // Select wallet based
       //  on dropdown
       select('Phantom'); // triggers wallet selection
       await connect(); // triggers wallet popup
-      console.log(wallet, publicKey, connected);
 
       if (!publicKey) {
         alert('Wallet connection failed');
