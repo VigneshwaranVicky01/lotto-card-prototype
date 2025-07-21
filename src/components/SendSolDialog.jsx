@@ -8,15 +8,15 @@ import {
   MenuItem,
   TextField,
 } from '@mui/material';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import {
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-} from '@solana/web3.js';
-import { useState } from 'react';
-import { useWalletDialog } from './WalletDialog'; // <- Context provider you're using
+// import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+// import {
+//   LAMPORTS_PER_SOL,
+//   PublicKey,
+//   SystemProgram,
+//   Transaction,
+// } from '@solana/web3.js';
+import { useContext, useState } from 'react';
+import { AppContext } from '../App';
 
 const walletOptions = [
   { name: 'Phantom', value: 'Phantom' },
@@ -24,66 +24,66 @@ const walletOptions = [
 ];
 
 const SendSolDialog = () => {
-  const { open, closeDialog, targetAddress, amount } = useWalletDialog();
-  const { connection } = useConnection();
-  const { wallets, publicKey, connected, sendTransaction, select, connect } =
-    useWallet();
+  const { open, closeDialog, targetAddress, amount } = useContext(AppContext);
+  // const { connection } = useConnection();
+  // const { wallets, publicKey, connected, sendTransaction, select, connect } =
+  //   useWallet();
 
   const [selectedWallet, setSelectedWallet] = useState('Phantom');
-  const [sending, setSending] = useState(false);
+  const [sending] = useState(false);
 
-  const handleSend = async () => {
-    if (!targetAddress || !amount || !selectedWallet) {
-      alert('Missing target address, amount or wallet');
-      return;
-    }
-    try {
-      setSending(true);
+  // const handleSend = async () => {
+  //   if (!targetAddress || !amount || !selectedWallet) {
+  //     alert('Missing target address, amount or wallet');
+  //     return;
+  //   }
+  //   try {
+  //     setSending(true);
 
-      const selectedWalletObj = wallets.find(
-        (w) => w.adapter.name === selectedWallet
-      );
+  //     const selectedWalletObj = wallets.find(
+  //       (w) => w.adapter.name === selectedWallet
+  //     );
 
-      //   if (!selectedWalletObj || !selectedWalletObj.adapter.ready) {
-      //     alert(
-      //       `${selectedWallet} wallet is not ready. Please refresh or reinstall.`
-      //     );
-      //     return;
-      //   }
-      // Select wallet based
-      //  on dropdown
-      select('Phantom'); // triggers wallet selection
-      await connect(); // triggers wallet popup
+  //     //   if (!selectedWalletObj || !selectedWalletObj.adapter.ready) {
+  //     //     alert(
+  //     //       `${selectedWallet} wallet is not ready. Please refresh or reinstall.`
+  //     //     );
+  //     //     return;
+  //     //   }
+  //     // Select wallet based
+  //     //  on dropdown
+  //     select('Phantom'); // triggers wallet selection
+  //     await connect(); // triggers wallet popup
 
-      if (!publicKey) {
-        alert('Wallet connection failed');
-        return;
-      }
+  //     if (!publicKey) {
+  //       alert('Wallet connection failed');
+  //       return;
+  //     }
 
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: new PublicKey(targetAddress),
-          lamports: amount * LAMPORTS_PER_SOL,
-        })
-      );
+  //     const transaction = new Transaction().add(
+  //       SystemProgram.transfer({
+  //         fromPubkey: publicKey,
+  //         toPubkey: new PublicKey(targetAddress),
+  //         lamports: amount * LAMPORTS_PER_SOL,
+  //       })
+  //     );
 
-      const { blockhash } = await connection.getLatestBlockhash();
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = publicKey;
+  //     const { blockhash } = await connection.getLatestBlockhash();
+  //     transaction.recentBlockhash = blockhash;
+  //     transaction.feePayer = publicKey;
 
-      const signature = await sendTransaction(transaction, connection);
-      await connection.confirmTransaction(signature, 'confirmed');
+  //     const signature = await sendTransaction(transaction, connection);
+  //     await connection.confirmTransaction(signature, 'confirmed');
 
-      alert('Transaction successful: ' + signature);
-      closeDialog();
-    } catch (err) {
-      console.error('Transaction error:', err);
-      alert('Transaction failed: ' + err.message);
-    } finally {
-      setSending(false);
-    }
-  };
+  //     alert('Transaction successful: ' + signature);
+  //     closeDialog();
+  //   } catch (err) {
+  //     console.error('Transaction error:', err);
+  //     alert('Transaction failed: ' + err.message);
+  //   } finally {
+  //     setSending(false);
+  //   }
+  // };
 
   return (
     <Dialog
@@ -127,7 +127,7 @@ const SendSolDialog = () => {
       <DialogActions>
         <Button onClick={closeDialog}>Cancel</Button>
         <Button
-          onClick={handleSend}
+          // onClick={handleSend}
           disabled={sending}
           variant='contained'
           color='primary'

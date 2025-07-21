@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import Landing from './pages/Landing.jsx';
 import CardDetails from './pages/CardDetails';
-import { createContext, useMemo } from 'react';
+import { createContext /* useMemo */, useState } from 'react';
 import SetTicketNumber from './pages/SetTicketNumber';
 import {
   getRandomDigitsFromArray,
@@ -12,31 +12,42 @@ import {
 } from './generals.js';
 import { hex256Numbers } from './hex256.js';
 import SearchTicket from './pages/SearchTicket.jsx';
-import { clusterApiUrl } from '@solana/web3.js';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
-import {
-  ConnectionProvider,
-  WalletProvider,
-} from '@solana/wallet-adapter-react';
-import {
-  WalletModalProvider,
-  WalletMultiButton,
-} from '@solana/wallet-adapter-react-ui';
+// import { clusterApiUrl } from '@solana/web3.js';
+// import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
+// import {
+//   ConnectionProvider,
+//   WalletProvider,
+// } from '@solana/wallet-adapter-react';
+// import {
+//   WalletModalProvider,
+//   WalletMultiButton,
+// } from '@solana/wallet-adapter-react-ui';
 import { WalletDialogProvider } from './components/WalletDialog.jsx';
 import SendSolDialog from './components/SendSolDialog.jsx';
-import { SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
 import BottomNav from './components/BottomNavigation.jsx';
 import Purchased from './pages/Purchased';
+import Test from './Test.jsx';
+import { SolanaProvider } from './provider/solana.jsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext();
 
 function App() {
-  const network = 'devnet';
+  const [open, setOpen] = useState(false);
+  const [targetAddress, setTargetAddress] = useState('');
+  const [amount, setAmount] = useState(0);
 
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const showDialog = ({ address, amount }) => {
+    setTargetAddress(address);
+    setAmount(amount);
+    setOpen(true);
+  };
 
-  const wallets = [new PhantomWalletAdapter(), new SolflareWalletAdapter()];
+  const closeDialog = () => {
+    setOpen(false);
+    setTargetAddress('');
+    setAmount(0);
+  };
 
   /* cards object */
   const cards = [
@@ -106,49 +117,55 @@ function App() {
   ];
 
   return (
-    <WalletDialogProvider>
-      <AppContext.Provider value={{ cards }}>
-        <ConnectionProvider endpoint={endpoint}>
+    <AppContext.Provider
+      value={{ cards, open, targetAddress, amount, showDialog, closeDialog }}
+    >
+      <SolanaProvider>
+        {/* <ConnectionProvider endpoint={endpoint}>
           <WalletProvider
             wallets={wallets}
             autoConnect={false}
           >
-            <WalletModalProvider>
-              <div className='App'>
-                {/* <WalletMultiButton /> */}
-                <Header />
-                <Box>
-                  <Routes>
-                    <Route
-                      path='/*'
-                      element={<Landing />}
-                    />
-                    <Route
-                      path='/card/:id/buy'
-                      element={<CardDetails />}
-                    />
-                    <Route
-                      path='/search/ticket'
-                      element={<SetTicketNumber />}
-                    />
-                    <Route
-                      path='/ticket/card'
-                      element={<SearchTicket />}
-                    />
-                    <Route
-                      path='/purchased'
-                      element={<Purchased />}
-                    />
-                  </Routes>
-                </Box>
-                <BottomNav />
-                <SendSolDialog />
-              </div>
-            </WalletModalProvider>
+            <WalletModalProvider> */}
+        <div className='App'>
+          {/* <WalletMultiButton /> */}
+          <Header />
+          <Box>
+            <Routes>
+              <Route
+                path='/*'
+                element={<Landing />}
+              />
+              <Route
+                path='/card/:id/buy'
+                element={<CardDetails />}
+              />
+              <Route
+                path='/search/ticket'
+                element={<SetTicketNumber />}
+              />
+              <Route
+                path='/ticket/card'
+                element={<SearchTicket />}
+              />
+              <Route
+                path='/purchased'
+                element={<Purchased />}
+              />
+              <Route
+                path='/test'
+                element={<Test />}
+              />
+            </Routes>
+          </Box>
+          <BottomNav />
+          <SendSolDialog />
+        </div>
+        {/* </WalletModalProvider>
           </WalletProvider>
-        </ConnectionProvider>
-      </AppContext.Provider>
-    </WalletDialogProvider>
+        </ConnectionProvider> */}
+      </SolanaProvider>
+    </AppContext.Provider>
   );
 }
 

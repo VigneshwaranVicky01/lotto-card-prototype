@@ -8,7 +8,6 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import React from 'react';
 
 const NumberTable = ({ setSelectedNumber }) => {
   const numbers = Array.from({ length: 48 }, (_, i) =>

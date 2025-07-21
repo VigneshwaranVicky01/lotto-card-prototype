@@ -2,6 +2,7 @@ import { FormControl, MenuItem, Select, Typography } from '@mui/material';
 import React from 'react';
 import ICSol from '../assets/icons/IcSol';
 import './LottoCard.css';
+import { hex256Numbers } from '../hex256';
 
 const LottoCard1 = ({
   ticketId = 'CB2025',
@@ -21,7 +22,7 @@ const LottoCard1 = ({
     setNumber(updated);
   };
 
-  const availableNumbers = [
+  /* const availableNumbers = [
     'B1',
     'CD',
     '43',
@@ -38,7 +39,7 @@ const LottoCard1 = ({
     '4E',
     '4F',
     '50',
-  ];
+  ]; */
 
   return (
     <div
@@ -115,7 +116,7 @@ const LottoCard1 = ({
                       },
                     }}
                   >
-                    {availableNumbers.map((availableNum) => (
+                    {hex256Numbers.map((availableNum) => (
                       <MenuItem
                         key={availableNum}
                         value={availableNum}

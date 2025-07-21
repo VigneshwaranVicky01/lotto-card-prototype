@@ -3,12 +3,10 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppContext } from '../App';
 import LottoCard from '../components/LottoCard';
-import { useWalletDialog } from '../components/WalletDialog';
 
 const CardDetails = () => {
-  const { cards } = useContext(AppContext);
+  const { cards, showDialog } = useContext(AppContext);
   const { id } = useParams();
-  const { showDialog } = useWalletDialog();
   const [cardDetails, setCardDetails] = useState();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -67,7 +65,7 @@ const CardDetails = () => {
                   address: '9NQ9MgmpVe1wrzn5WvXdrxapChTeoQtgbSkHgNpVqRpT',
                   amount: cardDetails.buy,
                 });
-                // console.log('successfully purchased');
+                console.log('successfully purchased');
               }}
             >
               Buy

@@ -3,6 +3,7 @@ import IcDownArrow from '../assets/icons/IcDownArrow.jsx';
 import ICSol from '../assets/icons/IcSol';
 import './LottoCard.css';
 import { useState } from 'react';
+import { hex256Numbers } from '../hex256.js';
 
 const LottoCard = ({
   ticketId = 'CB2025',
@@ -30,24 +31,24 @@ const LottoCard = ({
     setNumber(() => ({ title: name, ticketId: ticketId, numbers: updated }));
   };
 
-  const availableNumbers = [
-    'B1',
-    'CD',
-    '43',
-    '44',
-    '45',
-    '46',
-    '47',
-    '48',
-    '49',
-    '4A',
-    '4B',
-    '4C',
-    '4D',
-    '4E',
-    '4F',
-    '50',
-  ];
+  // const availableNumbers = [
+  //   'B1',
+  //   'CD',
+  //   '43',
+  //   '44',
+  //   '45',
+  //   '46',
+  //   '47',
+  //   '48',
+  //   '49',
+  //   '4A',
+  //   '4B',
+  //   '4C',
+  //   '4D',
+  //   '4E',
+  //   '4F',
+  //   '50',
+  // ];
 
   // custom styling icon to center
   function CustomCenteredIcon(props) {
@@ -167,7 +168,7 @@ const LottoCard = ({
                         },
                       }}
                     >
-                      {availableNumbers.map((availableNum) => (
+                      {hex256Numbers.map((availableNum) => (
                         <MenuItem
                           key={availableNum}
                           value={availableNum}

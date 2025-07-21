@@ -93,7 +93,7 @@ const SearchTicket = () => {
               address: '9NQ9MgmpVe1wrzn5WvXdrxapChTeoQtgbSkHgNpVqRpT',
               amount: buy,
             });
-            // console.log('successfully purchased');
+            console.log('successfully purchased');
           }}
         >
           Buy

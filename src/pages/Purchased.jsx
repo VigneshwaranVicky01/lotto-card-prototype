@@ -1,14 +1,13 @@
-import React from 'react';
 import { Box } from '@mui/material';
+import TicketDeck from '../components/TicketDeck';
 
 const Purchased = () => {
   return (
-    <Box
-      display='flex'
-      justifyContent='center'
-      mt={3}
-    >
-      No Tickets Purchased
+    <Box mt={3}>
+      <Box textAlign='center'>My Tickets</Box>
+      <Box mt={2}>
+        <TicketDeck />
+      </Box>
     </Box>
   );
 };
