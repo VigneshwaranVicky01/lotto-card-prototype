@@ -8,6 +8,9 @@ import {
   useTheme,
 } from '@mui/material';
 import ICSol from '../assets/icons/IcSol';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 const data = [
   {
@@ -206,7 +209,15 @@ const TicketCard = ({ ticket, w, h, i }) => {
             color='#fff'
             noWrap
           >
-            {ticket.id}
+            BlockHeight : 762826.......2222
+          </Typography>
+          <Typography
+            textAlign='center'
+            variant='caption'
+            color='#fff'
+            noWrap
+          >
+            #{ticket.id}
           </Typography>
         </Box>
       </CardContent>
@@ -223,7 +234,7 @@ export default function TicketDeckStrip() {
 
   /* Responsive dims */
   const CARD_W = sm ? 210 : 250;
-  const CARD_H = sm ? 190 : 190;
+  const CARD_H = sm ? 200 : 200;
   const GAP = sm ? 30 : 40;
   const STEP_H = 10;
 
@@ -235,6 +246,25 @@ export default function TicketDeckStrip() {
   const grouped = groupByTitle(data);
   const [groups, setGroups] = useState(grouped);
   const [openDeck, setOpenDeck] = useState(null);
+  const [openDialogDeck, setOpenDialogDeck] = useState(null);
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [activeDeck, setActiveDeck] = useState(null);
+  const [activeFrontCard, setActiveFrontCard] = useState({});
+
+  const handleCardClick = (title, card, index) => {
+    if (index === 0) {
+      setSelectedCard(card);
+      setDialogOpen(true);
+    } else {
+      bringToFrontInDialog(title, card.id);
+    }
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setSelectedCard(null);
+  };
 
   /* Bring clicked card to front within its title‑group */
   const bringToFront = (title, id) => {
@@ -247,24 +277,39 @@ export default function TicketDeckStrip() {
         [title]: [deck[idx], ...deck.slice(0, idx), ...deck.slice(idx + 1)],
       };
     });
+    setOpenDeck((prev) => (prev === title ? null : title)); // toggle
   };
+  const bringToFrontInDialog = (title, id) => {
+    setGroups((prev) => {
+      const deck = prev[title];
+      const idx = deck.findIndex((t) => t.id === id);
+      if (idx <= 0) return prev;
+      return {
+        ...prev,
+        [title]: [deck[idx], ...deck.slice(0, idx), ...deck.slice(idx + 1)],
+      };
+    });
+    setOpenDialogDeck((prev) => (prev === title ? null : title)); // toggle
+  };
+
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        // flexDirection: 'column',
-        gap: '15px',
-        overflowX: 'auto',
-        scrollSnapType: 'x mandatory',
-        px: 2,
-        pb: 3,
-        // ml: 5,
-        // mb: 10,
-        '::-webkit-scrollbar': { display: 'none' },
-      }}
-    >
-      {/* one design for card decks */}
-      {Object.entries(groups).map(([title, deck]) => {
+    <>
+      <Box
+        sx={{
+          display: 'flex',
+          // flexDirection: 'column',
+          // gap: '15px',
+          overflowX: 'auto',
+          scrollSnapType: 'x mandatory',
+          px: 2,
+          pb: 3,
+          // ml: 5,
+          // mb: 10,
+          '::-webkit-scrollbar': { display: 'none' },
+        }}
+      >
+        {/* one design for card decks */}
+        {/* {Object.entries(groups).map(([title, deck]) => {
         return (
           <Box
             key={title}
@@ -305,87 +350,270 @@ export default function TicketDeckStrip() {
             ))}
           </Box>
         );
-      })}
-      {/*   {Object.entries(grouped).map(([title, deck]) => {
-        const selectedId = activeFrontCard[title] ?? deck[0].id;
-        const selectedIndex = deck.findIndex((c) => c.id === selectedId);
-        const showExpanded = activeDeck === title;
-
-        return (
+      })} */}
+        {Object.entries(groups).map(([title, deck]) => (
           <Box
             key={title}
-            sx={{ mb: 5 }}
+            sx={{
+              minWidth: CARD_W + (deck.length - 1) * 30,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: 1,
+            }}
           >
-            {/* DECK VIEW */}
-      {/* <Box
+            {/* STACKED CARDS DECK */}
+            <Box
               sx={{
-                // display: 'flex',
                 position: 'relative',
-                scrollSnapAlign: 'start',
-                width: Math.max(CARD_W + (deck.length - 1) * GAP, 250),
-                height: CARD_H + (deck.length - 1) * STEP_H,
-                cursor: 'pointer',
+                height: CARD_H + 20,
+                width: CARD_W + (deck.length - 1) * 30,
               }}
             >
-              {deck.map((ticket, i) => {
-                const isActive = ticket.id === selectedId;
-                return (
-                  <Box
-                    key={ticket.id}
-                    onClick={() => {
-                      setActiveFrontCard((prev) => ({
-                        ...prev,
-                        [title]: ticket.id,
-                      }));
-                      setActiveDeck(title); // show full list below
-                    }}
-                    sx={{
-                      position: 'absolute',
-                      left: i * GAP,
-                      top: 0,
-                      zIndex: isActive ? deck.length : i,
-                      transition: 'all 0.3s ease-in-out',
-                    }}
-                  >
-                    <TicketCard
-                      ticket={ticket}
-                      w={CARD_W}
-                      h={Math.max(60, CARD_H - i * STEP_H)}
-                      // h={CARD_H + i * STEP_H}
-                      i={i}
-                    />
-                  </Box>
-                );
-              })}
-            </Box>
-
-          EXPANDED VIEW */}
-      {/*   {showExpanded && (
-              <Box
-                sx={{
-                  mt: 2,
-                  display: 'flex',
-                  overflowX: 'auto',
-                  gap: 2,
-                  py: 1,
-                  pl: 1,
-                  '::-webkit-scrollbar': { display: 'none' },
-                }}
-              >
-                {deck.map((ticket, i) => (
+              {deck.map((t, i) => (
+                <Box
+                  key={t.id}
+                  onClick={() => bringToFront(title, t.id)}
+                  sx={{
+                    position: 'absolute',
+                    top: i * 4,
+                    left: i * 30,
+                    zIndex: deck.length - i,
+                    cursor: 'pointer',
+                    transform: `scale(${1 - i * 0.03})`,
+                    transformOrigin: 'left top',
+                    transition: 'all 0.25s ease',
+                  }}
+                >
                   <TicketCard
-                    key={ticket.id}
-                    ticket={ticket}
+                    ticket={t}
+                    i={i}
                     w={CARD_W}
                     h={CARD_H}
-                    i={i}
                   />
-                ))}
-              </Box>
+                </Box>
+              ))}
+            </Box>
+            {openDeck === title && (
+              <ExpandMoreIcon
+                sx={{ textAlign: 'center', width: '100%', fontSize: '30px' }}
+              />
+            )}
+            {/* EXPANDED LIST BELOW DECK */}
+            {openDeck === title && (
+              <>
+                <Typography
+                  sx={{ textAlign: 'center' }}
+                  fontWeight={900}
+                >
+                  {title}
+                </Typography>
+                <Box
+                  sx={{
+                    mb: 5,
+                    display: 'flex',
+                    gap: 2,
+                    overflowX: 'auto',
+                    px: 1,
+                    py: 1,
+                    // width: '100%',
+                    '::-webkit-scrollbar': { display: 'none' },
+                  }}
+                >
+                  {deck.map((t, i) => (
+                    <TicketCard
+                      key={`expanded-${t.id}`}
+                      ticket={t}
+                      i={i}
+                      w={CARD_W}
+                      h={CARD_H}
+                    />
+                  ))}
+                </Box>
+              </>
             )}
           </Box>
-        );
-      })} */}
-    </Box>
+        ))}
+      </Box>
+      {Object.entries(groups).map(([title, deck]) => (
+        <Box
+          key={title}
+          sx={{
+            minWidth: CARD_W + (deck.length - 1) * 30,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: 1,
+          }}
+        >
+          {/* STACKED CARDS DECK */}
+          <Box
+            sx={{
+              position: 'relative',
+              height: CARD_H + 20,
+              width: CARD_W + (deck.length - 1) * 30,
+            }}
+          >
+            {deck.map((t, i) => (
+              <Box
+                key={t.id}
+                onClick={() => handleCardClick(title, t, i)}
+                sx={{
+                  position: 'absolute',
+                  top: i * 4,
+                  left: i * 30,
+                  zIndex: deck.length - i,
+                  cursor: 'pointer',
+                  transform: `scale(${1 - i * 0.03})`,
+                  transformOrigin: 'left top',
+                  transition: 'all 0.25s ease',
+                }}
+              >
+                <TicketCard
+                  ticket={t}
+                  i={i}
+                  w={CARD_W}
+                  h={CARD_H}
+                />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      ))}
+      {/* 3rd */}
+      <Box
+        my={4}
+        mb={10}
+      >
+        <Typography mb={2}>My Tickets</Typography>
+
+        {Object.entries(grouped).map(([title, deck]) => {
+          const selectedId = activeFrontCard[title] ?? deck[0].id;
+          const selectedIndex = deck.findIndex((c) => c.id === selectedId);
+          const showExpanded = activeDeck === title;
+
+          return (
+            <Box
+              key={title}
+              sx={{ mb: showExpanded ? 6 : 4 }}
+            >
+              {/* DECK VIEW */}
+              <Box
+                sx={{
+                  position: 'relative',
+                  width: CARD_W + (deck.length - 1) * 30,
+                  height: CARD_H + (deck.length - 1) * 5, // small extra height for elevation effect
+                  mx: 1, // slight horizontal margin
+                }}
+              >
+                {deck.map((ticket, i) => {
+                  const isActive = ticket.id === selectedId;
+                  return (
+                    <Box
+                      key={ticket.id}
+                      onClick={() => {
+                        setActiveFrontCard((prev) => ({
+                          ...prev,
+                          [title]: ticket.id,
+                        }));
+                        setActiveDeck(title);
+                      }}
+                      sx={{
+                        position: 'absolute',
+                        left: i * 30,
+                        top: i * 2, // give slight vertical offset for elevation
+                        zIndex: isActive ? deck.length + 1 : i,
+                        transition: 'all 0.3s ease-in-out',
+                        filter: isActive ? 'none' : 'brightness(0.95)',
+                        boxShadow: isActive ? 4 : 2,
+                      }}
+                    >
+                      <TicketCard
+                        ticket={ticket}
+                        w={CARD_W}
+                        h={CARD_H}
+                        i={i}
+                      />
+                    </Box>
+                  );
+                })}
+              </Box>
+
+              {/* EXPANDED LIST */}
+              {showExpanded && (
+                <>
+                  <ExpandMoreIcon
+                    sx={{
+                      textAlign: 'center',
+                      width: '100%',
+                      fontSize: 30,
+                      mt: 1,
+                      mb: 0.5,
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      mt: 1,
+                      display: 'flex',
+                      overflowX: 'auto',
+                      width: '100%',
+                      gap: 2,
+                      py: 1,
+                      pl: 1,
+                      pr: 1,
+                      scrollSnapType: 'x mandatory',
+                      '::-webkit-scrollbar': { display: 'none' },
+                    }}
+                  >
+                    {deck.map((ticket, i) => (
+                      <TicketCard
+                        key={ticket.id}
+                        ticket={ticket}
+                        w={CARD_W}
+                        h={CARD_H}
+                        i={i}
+                      />
+                    ))}
+                  </Box>
+                </>
+              )}
+            </Box>
+          );
+        })}
+      </Box>
+
+      <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        maxWidth='xs'
+        fullWidth
+      >
+        <DialogTitle
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          Ticket Details
+          <IconButton
+            onClick={handleDialogClose}
+            size='small'
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          {selectedCard && (
+            <TicketCard
+              ticket={selectedCard}
+              w='100%'
+              h={CARD_H + 20}
+              i={0}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
