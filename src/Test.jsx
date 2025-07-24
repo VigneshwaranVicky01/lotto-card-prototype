@@ -12,7 +12,7 @@ const Test = () => {
       My Tickets
       <Box mb={2}>
         <SolanaPaymentButton />
-        {/* <WalletButton /> */}
+        <WalletButton />
       </Box>
       <Box mt={2}>
         <TicketDeck />

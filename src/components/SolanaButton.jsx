@@ -6,32 +6,67 @@ import {
   clusterApiUrl,
 } from '@solana/web3.js';
 import { useState } from 'react';
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Typography,
+} from '@mui/material';
 
 const receiverAddress = '9NQ9MgmpVe1wrzn5WvXdrxapChTeoQtgbSkHgNpVqRpT'; // Replace with your wallet address
 
-export default function SolanaPaymentButton() {
-  const [status, setStatus] = useState('Idle');
+const WALLET_LIST = [
+  { name: 'Phantom', key: 'phantom', providerPath: 'phantom.solana' },
+  { name: 'Solflare', key: 'solflare', providerPath: 'solflare' },
+  { name: 'Backpack', key: 'backpack', providerPath: 'backpack' },
+  // You can add more manually here
+];
 
-  const handlePayment = async () => {
-    setStatus('Checking wallet...');
+export default function SolanaStaticWalletDialog() {
+  const [status, setStatus] = useState('Idle');
+  const [walletDialogOpen, setWalletDialogOpen] = useState(false);
+
+  const handleOpenDialog = () => {
+    setWalletDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setWalletDialogOpen(false);
+  };
+
+  const getProviderFromWindow = (providerPath) => {
+    const parts = providerPath.split('.');
+    let provider = window;
+    for (const part of parts) {
+      provider = provider?.[part];
+    }
+    return provider;
+  };
+
+  const handleWalletSelect = async (wallet) => {
+    handleCloseDialog();
+    setStatus(` Opening ${wallet.name}...`);
 
     try {
-      //  1. Detect Phantom
-      const provider = window.solana;
-      if (!provider || !provider.isPhantom) {
-        setStatus('Phantom wallet not detected.');
+      const provider = getProviderFromWindow(wallet.providerPath);
+
+      if (!provider) {
+        setStatus(` ${wallet.name} not found. Install the ?`);
         return;
       }
 
-      //  2. Connect to wallet
-      const resp = await provider.connect(); // Will trigger wallet popup
+      const resp = await provider.connect();
       const senderPublicKey = new PublicKey(resp.publicKey.toString());
 
-      //  3. Set up connection
       const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
-
-      //  4. Create transaction
       const receiverPublicKey = new PublicKey(receiverAddress);
+
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: senderPublicKey,
@@ -40,37 +75,29 @@ export default function SolanaPaymentButton() {
         })
       );
 
-      setStatus('✍️ Requesting signature...');
+      setStatus(' Requesting signature...');
 
-      //  5. Let Phantom sign and send transaction
       const { signature } = await provider.signAndSendTransaction(transaction);
 
-      setStatus('⏳ Sending transaction...');
+      setStatus(' Sending transaction...');
 
-      //  6. Confirm transaction
       const confirmation = await connection.confirmTransaction(
         signature,
         'confirmed'
       );
 
-      console.log(confirmation);
-      //  7. Check on-chain confirmation
       const result = await connection.getParsedTransaction(signature, {
         commitment: 'confirmed',
       });
 
       if (result?.meta?.err) {
-        setStatus(
-          ` Transaction failed on-chain: ${JSON.stringify(result.meta.err)}`
-        );
+        setStatus(` On-chain error: ${JSON.stringify(result.meta.err)}`);
       } else {
-        setStatus(' Transaction confirmed! Signature: ' + signature);
-
-        // 👉 Record success to DB or analytics here
+        setStatus(` Success! Signature: ${signature}`);
       }
     } catch (error) {
       if (error?.message?.includes('User rejected')) {
-        setStatus(' Transaction rejected by user.');
+        setStatus(' User rejected the transaction.');
       } else {
         setStatus(` Error: ${error.message || error.toString()}`);
       }
@@ -79,13 +106,44 @@ export default function SolanaPaymentButton() {
 
   return (
     <div className='p-4 bg-gray-100 rounded-md'>
-      <button
-        onClick={handlePayment}
-        className='bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded'
+      <Button
+        onClick={handleOpenDialog}
+        variant='contained'
+        color='secondary'
       >
         Send 0.01 SOL
-      </button>
-      <p className='mt-3 text-sm'>{status}</p>
+      </Button>
+
+      <Typography
+        variant='body2'
+        sx={{ mt: 2 }}
+      >
+        {status}
+      </Typography>
+
+      <Dialog
+        open={walletDialogOpen}
+        onClose={handleCloseDialog}
+      >
+        <DialogTitle>Select a Wallet</DialogTitle>
+        <DialogContent>
+          <List>
+            {WALLET_LIST.map((wallet) => (
+              <ListItem
+                disablePadding
+                key={wallet.key}
+              >
+                <ListItemButton onClick={() => handleWalletSelect(wallet)}>
+                  <ListItemText primary={wallet.name} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

@@ -28,6 +28,7 @@ import BottomNav from './components/BottomNavigation.jsx';
 import Purchased from './pages/Purchased';
 import Test from './Test.jsx';
 import { SolanaProvider } from './provider/solana.jsx';
+import Sol from './pages/Sol.jsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext();
@@ -155,6 +156,10 @@ function App() {
               <Route
                 path='/test'
                 element={<Test />}
+              />
+              <Route
+                path='/wallet-test'
+                element={<Sol />}
               />
             </Routes>
           </Box>
