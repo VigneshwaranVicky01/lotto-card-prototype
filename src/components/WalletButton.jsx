@@ -6,13 +6,13 @@ export default function WalletButton() {
   const { publicKey, connected, connecting } = useWallet();
   const [hasSolanaWallet, setHasSolanaWallet] = useState(true);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const isPhantomInstalled = window?.solana?.isPhantom;
-      const isSolflareInstalled = window?.solflare;
-      setHasSolanaWallet(!!isSolflareInstalled || !!isPhantomInstalled);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const isPhantomInstalled = window?.solana?.isPhantom;
+  //     const isSolflareInstalled = window?.solflare;
+  //     setHasSolanaWallet(!!isSolflareInstalled || !!isPhantomInstalled);
+  //   }
+  // }, []);
 
   //   useEffect(() => {
   //     if (connected && publicKey) {
