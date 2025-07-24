@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, Button, IconButton, Typography } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchIcon from '../assets/icons/searchIcon';
@@ -26,6 +26,14 @@ const Header = () => {
       >
         Copper bet
       </Typography>
+      <Button
+        variant='contained'
+        onClick={() => {
+          navigate('/wallet-test');
+        }}
+      >
+        Wallet Test
+      </Button>
       <IconButton
         sx={{ padding: '0 !important' }}
         onClick={() => navigate('/search/ticket')}
