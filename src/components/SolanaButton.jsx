@@ -32,6 +32,8 @@ export default function SolanaStaticWalletDialog() {
   const [status, setStatus] = useState('Idle');
   const [walletDialogOpen, setWalletDialogOpen] = useState(false);
 
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
   const handleOpenDialog = () => {
     setWalletDialogOpen(true);
   };
@@ -51,13 +53,28 @@ export default function SolanaStaticWalletDialog() {
 
   const handleWalletSelect = async (wallet) => {
     handleCloseDialog();
-    setStatus(` Opening ${wallet.name}...`);
+
+    if (isMobile) {
+      setStatus(
+        ` Mobile wallets are not injected in browser. Please open this page inside the ${wallet.name} app browser.`
+      );
+
+      // Optional: Redirect to Phantom mobile wallet if user chose it
+      if (wallet.key === 'phantom') {
+        const dappUrl = encodeURIComponent(window.location.href);
+        window.location.href = `https://phantom.app/ul/browse/${dappUrl}`;
+      }
+
+      return;
+    }
+
+    setStatus(`Opening ${wallet.name}...`);
 
     try {
       const provider = getProviderFromWindow(wallet.providerPath);
 
       if (!provider) {
-        setStatus(` ${wallet.name} not found. Install the ?`);
+        setStatus(` ${wallet.name} not found. Please install the extension.`);
         return;
       }
 
@@ -71,16 +88,14 @@ export default function SolanaStaticWalletDialog() {
         SystemProgram.transfer({
           fromPubkey: senderPublicKey,
           toPubkey: receiverPublicKey,
-          lamports: 0.01 * 1e9, // 0.01 SOL
+          lamports: 0.01 * 1e9,
         })
       );
 
-      setStatus(' Requesting signature...');
-
+      setStatus('Requesting signature...');
       const { signature } = await provider.signAndSendTransaction(transaction);
 
-      setStatus(' Sending transaction...');
-
+      setStatus('Sending transaction...');
       const confirmation = await connection.confirmTransaction(
         signature,
         'confirmed'
