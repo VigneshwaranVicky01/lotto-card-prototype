@@ -133,7 +133,7 @@ export default function SolanaWalletDialog() {
   };
 
   return (
-    <div className='p-4 bg-gray-100 rounded-md'>
+    <div>
       <Button
         onClick={handleOpenDialog}
         variant='contained'
@@ -145,6 +145,8 @@ export default function SolanaWalletDialog() {
       <Typography
         variant='body2'
         sx={{ mt: 2 }}
+        width='100%'
+        overflow='clip'
       >
         {status}
       </Typography>

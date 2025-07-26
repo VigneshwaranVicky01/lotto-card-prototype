@@ -110,42 +110,31 @@ export default function WalletButton() {
 
   return (
     <Box
-      sx={{
-        color: '#ffffff',
-        mb: 30,
-        width: '100%',
-        background: 'transparent',
-      }}
+      // elevation={3}
+      sx={{ padding: 3, mb: 10, width: '85%', overflow: 'hidden' }}
     >
       <WalletMultiButton />
-
       {connected && (
-        <Box
-          // mt={3}
-          width='100%'
-          overflow='clip'
-        >
+        <Box mt={3}>
           <Typography
             variant='h6'
             gutterBottom
           >
-            Connected Wallet:{' '}
+            Connected Wallet:
             <Typography
               component='span'
               fontWeight='bold'
-              sx={{ width: '80%', overflow: 'clip' }}
+              width='100%'
+              overflow='hidden'
             >
               {publicKey?.toBase58()}
             </Typography>
           </Typography>
-
           <TextField
             fullWidth
             label='Recipient Public Address'
             margin='normal'
             value={recipientAddress}
-            // onChange={(e) => setRecipientAddress(e.target.value)}
-            // placeholder='e.g., AnV5Ff...'
             sx={{
               input: {
                 color: '#ffffff',
@@ -168,6 +157,8 @@ export default function WalletButton() {
                 },
               },
             }}
+            // onChange={(e) => setRecipientAddress(e.target.value)}
+            // placeholder="e.g., AnV5Ff..."
           />
           <TextField
             fullWidth
@@ -175,8 +166,6 @@ export default function WalletButton() {
             label='SOL Amount'
             margin='normal'
             value={solAmount}
-            // onChange={(e) => setSolAmount(e.target.value)}
-            placeholder='e.g., 0.1'
             sx={{
               input: {
                 color: '#ffffff',
@@ -199,20 +188,25 @@ export default function WalletButton() {
                 },
               },
             }}
+            // onChange={(e) => setSolAmount(e.target.value)}
+            // placeholder="e.g., 0.1"
+            // inputProps={{ step: 'any', min: '0' }}
           />
 
           <Button
             fullWidth
             variant='contained'
             color='primary'
-            sx={{ mt: 0.5, width: '80%' }}
+            sx={{ mt: 2 }}
             disabled={!connected || !recipientAddress || !solAmount}
             onClick={sendSol}
           >
             Send SOL
           </Button>
+
           {transactionStatus && (
             <Alert
+              sx={{ mt: 2 }}
               severity={
                 transactionStatus.includes('failed') ? 'error' : 'success'
               }
