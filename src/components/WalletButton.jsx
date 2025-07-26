@@ -19,22 +19,13 @@ export default function WalletButton() {
   const [solAmount, setSolAmount] = useState(0.1);
   const [transactionStatus, setTransactionStatus] = useState('');
 
-  // You can uncomment this useEffect if you want to explicitly check for wallet installation
-  // useEffect(() => {
-  //   if (typeof window !== 'undefined') {
-  //     const isPhantomInstalled = window?.solana?.isPhantom;
-  //     const isSolflareInstalled = window?.solflare;
-  //     setHasSolanaWallet(!!isSolflareInstalled || !!isPhantomInstalled);
-  //   }
-  // }, []);
-
   useEffect(() => {
     if (connected && publicKey) {
       console.log('Wallet connected:', publicKey.toBase58());
-      setTransactionStatus(''); // Clear status on new connection
+      setTransactionStatus('');
     } else if (!connecting && !connected) {
       console.log('Wallet disconnected');
-      setTransactionStatus(''); // Clear status on disconnect
+      setTransactionStatus('');
     }
   }, [connected, publicKey, connecting]);
 
@@ -80,18 +71,18 @@ export default function WalletButton() {
         })
       );
 
-      // ✅ Don't set recentBlockhash or feePayer manually
+      //  Let wallet-adapter handle recentBlockhash and feePayer
       const signature = await sendTransaction(transaction, connection);
 
-      // Confirm the transaction
+      // Confirm transaction
       await connection.confirmTransaction(signature, 'confirmed');
 
-      setTransactionStatus(`Transaction successful! Signature: ${signature}`);
+      setTransactionStatus(` Transaction successful! Signature: ${signature}`);
       console.log('Transaction successful! Signature:', signature);
       setRecipientAddress('');
       setSolAmount('');
     } catch (error) {
-      setTransactionStatus(`Transaction failed: ${error.message}`);
+      setTransactionStatus(` Transaction failed: ${error.message}`);
       console.error('Transaction failed:', error);
     }
   }, [publicKey, recipientAddress, solAmount, sendTransaction]);
@@ -134,7 +125,7 @@ export default function WalletButton() {
               type='text'
               id='recipientAddress'
               value={recipientAddress}
-              // onChange={(e) => setRecipientAddress(e.target.value)}
+              onChange={(e) => setRecipientAddress(e.target.value)}
               className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
               placeholder='e.g., AnV5Ff...'
             />
