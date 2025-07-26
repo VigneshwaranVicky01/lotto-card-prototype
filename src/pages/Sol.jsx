@@ -6,8 +6,9 @@ import WalletButton from '../components/WalletButton';
 const Sol = () => {
   return (
     <Box
-      ml={5}
+      ml={1}
       my={2}
+      mb={10}
     >
       <Typography mb={1}>Direct Pay</Typography>
       <SolanaPaymentButton />

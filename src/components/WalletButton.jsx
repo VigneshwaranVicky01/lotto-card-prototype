@@ -1,4 +1,11 @@
-import { Typography } from '@mui/material';
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+  Paper,
+} from '@mui/material';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import {
@@ -12,7 +19,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 export default function WalletButton() {
   const { publicKey, connected, connecting, sendTransaction } = useWallet();
-  const [hasSolanaWallet, setHasSolanaWallet] = useState(true);
+  const [hasSolanaWallet] = useState(true);
   const [recipientAddress, setRecipientAddress] = useState(
     '9NQ9MgmpVe1wrzn5WvXdrxapChTeoQtgbSkHgNpVqRpT'
   );
@@ -71,10 +78,9 @@ export default function WalletButton() {
         })
       );
 
-      //  Let wallet-adapter handle recentBlockhash and feePayer
+      // Don't manually set blockhash or feePayer
       const signature = await sendTransaction(transaction, connection);
 
-      // Confirm transaction
       await connection.confirmTransaction(signature, 'confirmed');
 
       setTransactionStatus(` Transaction successful! Signature: ${signature}`);
@@ -89,88 +95,133 @@ export default function WalletButton() {
 
   if (!hasSolanaWallet) {
     return (
-      <div className='bg-yellow-100 text-yellow-800 p-4 rounded-md'>
-        <p>No Solana wallet detected.</p>
+      <Alert severity='warning'>
+        No Solana wallet detected.{' '}
         <a
           href='https://phantom.app/'
           target='_blank'
           rel='noopener noreferrer'
-          className='text-blue-600 underline'
         >
           Install Phantom Wallet
         </a>
-      </div>
+      </Alert>
     );
   }
 
   return (
-    <div className='space-y-4 p-4 border rounded-lg shadow-md'>
+    <Box
+      sx={{
+        color: '#ffffff',
+        mb: 10,
+        width: '100%',
+        background: 'transparent',
+      }}
+    >
       <WalletMultiButton />
 
       {connected && (
-        <div className='mt-4 space-y-3'>
-          <Typography variant='h6'>
+        <Box
+          // mt={3}
+          width='100%'
+          overflow='clip'
+        >
+          <Typography
+            variant='h6'
+            gutterBottom
+          >
             Connected Wallet:{' '}
-            <span className='font-semibold'>{publicKey?.toBase58()}</span>
+            <Typography
+              component='span'
+              fontWeight='bold'
+              sx={{ width: '80%', overflow: 'clip' }}
+            >
+              {publicKey?.toBase58()}
+            </Typography>
           </Typography>
 
-          <div>
-            <label
-              htmlFor='recipientAddress'
-              className='block text-sm font-medium text-gray-700'
-            >
-              Recipient Public Address:
-            </label>
-            <input
-              type='text'
-              id='recipientAddress'
-              value={recipientAddress}
-              onChange={(e) => setRecipientAddress(e.target.value)}
-              className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-              placeholder='e.g., AnV5Ff...'
-            />
-          </div>
+          <TextField
+            fullWidth
+            label='Recipient Public Address'
+            margin='normal'
+            value={recipientAddress}
+            onChange={(e) => setRecipientAddress(e.target.value)}
+            placeholder='e.g., AnV5Ff...'
+            sx={{
+              input: {
+                color: '#ffffff',
+              },
+              label: {
+                color: '#ffffff',
+                '&.Mui-focused': {
+                  color: '#ffffff',
+                },
+              },
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: '#ffffff',
+                },
+                '&:hover fieldset': {
+                  borderColor: '#ffffff',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#ffffff',
+                },
+              },
+            }}
+          />
+          <TextField
+            fullWidth
+            type='number'
+            label='SOL Amount'
+            margin='normal'
+            value={solAmount}
+            onChange={(e) => setSolAmount(e.target.value)}
+            placeholder='e.g., 0.1'
+            sx={{
+              input: {
+                color: '#ffffff',
+              },
+              label: {
+                color: '#ffffff',
+                '&.Mui-focused': {
+                  color: '#ffffff',
+                },
+              },
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: '#ffffff',
+                },
+                '&:hover fieldset': {
+                  borderColor: '#ffffff',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#ffffff',
+                },
+              },
+            }}
+          />
 
-          <div>
-            <label
-              htmlFor='solAmount'
-              className='block text-sm font-medium text-gray-700'
-            >
-              SOL Amount:
-            </label>
-            <input
-              type='number'
-              id='solAmount'
-              value={solAmount}
-              onChange={(e) => setSolAmount(e.target.value)}
-              step='any'
-              min='0'
-              className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-              placeholder='e.g., 0.1'
-            />
-          </div>
-
-          <button
-            onClick={sendSol}
+          <Button
+            fullWidth
+            variant='contained'
+            color='primary'
+            sx={{ mt: 0.5, width: '80%' }}
             disabled={!connected || !recipientAddress || !solAmount}
-            className='w-full px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed'
+            onClick={sendSol}
           >
             Send SOL
-          </button>
-
+          </Button>
           {transactionStatus && (
-            <p
-              className={`mt-2 text-sm ${
-                transactionStatus.includes('failed')
-                  ? 'text-red-600'
-                  : 'text-green-600'
-              }`}
+            <Alert
+              severity={
+                transactionStatus.includes('failed') ? 'error' : 'success'
+              }
             >
               {transactionStatus}
-            </p>
+            </Alert>
           )}
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
