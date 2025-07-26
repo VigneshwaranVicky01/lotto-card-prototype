@@ -8,12 +8,13 @@ const Sol = () => {
     <Box
       ml={1}
       my={2}
-      mb={10}
     >
       <Typography mb={1}>Direct Pay</Typography>
       <SolanaPaymentButton />
-      <Typography my={2}>Stores Public Key</Typography>
-      <WalletButton />
+      <Box>
+        <Typography my={2}>Stores Public Key</Typography>
+        <WalletButton />
+      </Box>
     </Box>
   );
 };

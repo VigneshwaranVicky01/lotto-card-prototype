@@ -112,7 +112,7 @@ export default function WalletButton() {
     <Box
       sx={{
         color: '#ffffff',
-        mb: 10,
+        mb: 30,
         width: '100%',
         background: 'transparent',
       }}
@@ -144,8 +144,8 @@ export default function WalletButton() {
             label='Recipient Public Address'
             margin='normal'
             value={recipientAddress}
-            onChange={(e) => setRecipientAddress(e.target.value)}
-            placeholder='e.g., AnV5Ff...'
+            // onChange={(e) => setRecipientAddress(e.target.value)}
+            // placeholder='e.g., AnV5Ff...'
             sx={{
               input: {
                 color: '#ffffff',
@@ -175,7 +175,7 @@ export default function WalletButton() {
             label='SOL Amount'
             margin='normal'
             value={solAmount}
-            onChange={(e) => setSolAmount(e.target.value)}
+            // onChange={(e) => setSolAmount(e.target.value)}
             placeholder='e.g., 0.1'
             sx={{
               input: {

@@ -25,10 +25,9 @@ const WALLET_LIST = [
   { name: 'Phantom', key: 'phantom', providerPath: 'phantom.solana' },
   { name: 'Solflare', key: 'solflare', providerPath: 'solflare' },
   { name: 'Backpack', key: 'backpack', providerPath: 'backpack' },
-  // You can add more manually here
 ];
 
-export default function SolanaStaticWalletDialog() {
+export default function SolanaWalletDialog() {
   const [status, setStatus] = useState('Idle');
   const [walletDialogOpen, setWalletDialogOpen] = useState(false);
 
@@ -51,30 +50,39 @@ export default function SolanaStaticWalletDialog() {
     return provider;
   };
 
+  const openSolanaPayLink = () => {
+    const recipient = receiverAddress;
+    const amount = 0.01;
+    const label = 'Copper Bet';
+    const message = 'Payment for lottery ticket from copper bet';
+    // const reference = new PublicKey('11111111111111111111111111111111'); // Optional
+
+    const solanaPayUrl = new URL('solana:' + recipient);
+    solanaPayUrl.searchParams.append('amount', amount.toString());
+    solanaPayUrl.searchParams.append('label', label);
+    solanaPayUrl.searchParams.append('message', message);
+    // solanaPayUrl.searchParams.append('reference', reference.toBase58());
+
+    // This will open wallet apps with the payment popup
+    window.location.href = solanaPayUrl.toString();
+  };
+
   const handleWalletSelect = async (wallet) => {
     handleCloseDialog();
 
     if (isMobile) {
-      setStatus(
-        ` Mobile wallets are not injected in browser. Please open this page inside the ${wallet.name} app browser.`
-      );
-
-      // Optional: Redirect to Phantom mobile wallet if user chose it
-      if (wallet.key === 'phantom') {
-        const dappUrl = encodeURIComponent(window.location.href);
-        window.location.href = `https://phantom.app/ul/browse/${dappUrl}`;
-      }
-
+      setStatus(`Opening ${wallet.name} wallet app for payment...`);
+      openSolanaPayLink();
       return;
     }
 
-    setStatus(`Opening ${wallet.name}...`);
+    setStatus(`Connecting to ${wallet.name}...`);
 
     try {
       const provider = getProviderFromWindow(wallet.providerPath);
 
       if (!provider) {
-        setStatus(` ${wallet.name} not found. Please install the extension.`);
+        setStatus(`${wallet.name} not found. Please install the extension.`);
         return;
       }
 
@@ -84,7 +92,12 @@ export default function SolanaStaticWalletDialog() {
       const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
       const receiverPublicKey = new PublicKey(receiverAddress);
 
-      const transaction = new Transaction().add(
+      const { blockhash } = await connection.getLatestBlockhash('finalized');
+
+      const transaction = new Transaction({
+        recentBlockhash: blockhash,
+        feePayer: senderPublicKey,
+      }).add(
         SystemProgram.transfer({
           fromPubkey: senderPublicKey,
           toPubkey: receiverPublicKey,
@@ -95,7 +108,7 @@ export default function SolanaStaticWalletDialog() {
       setStatus('Requesting signature...');
       const { signature } = await provider.signAndSendTransaction(transaction);
 
-      setStatus('Sending transaction...');
+      setStatus('Confirming transaction...');
       const confirmation = await connection.confirmTransaction(
         signature,
         'confirmed'
@@ -106,15 +119,15 @@ export default function SolanaStaticWalletDialog() {
       });
 
       if (result?.meta?.err) {
-        setStatus(` On-chain error: ${JSON.stringify(result.meta.err)}`);
+        setStatus(`On-chain error: ${JSON.stringify(result.meta.err)}`);
       } else {
-        setStatus(` Success! Signature: ${signature}`);
+        setStatus(`Success! Signature: ${signature}`);
       }
     } catch (error) {
       if (error?.message?.includes('User rejected')) {
-        setStatus(' User rejected the transaction.');
+        setStatus('User rejected the transaction.');
       } else {
-        setStatus(` Error: ${error.message || error.toString()}`);
+        setStatus(`Error: ${error.message || error.toString()}`);
       }
     }
   };
