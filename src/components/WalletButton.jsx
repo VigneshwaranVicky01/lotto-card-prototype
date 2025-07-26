@@ -67,16 +67,11 @@ export default function WalletButton() {
     setTransactionStatus('Sending SOL...');
 
     try {
-      // Establish a connection to the Solana cluster
-      // Use 'mainnet-beta' for production, 'devnet' or 'testnet' for development
       const connection = new Connection(
         'https://api.devnet.solana.com',
         'confirmed'
-      ); // Or 'https://api.mainnet-beta.solana.com' for production
+      );
 
-      console.log(connection);
-
-      // Create a new transaction
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
@@ -85,17 +80,11 @@ export default function WalletButton() {
         })
       );
 
-      console.log('transaction', transaction);
-      // Get the latest blockhash
-      const { blockhash } = await connection.getLatestBlockhash();
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = publicKey;
-
-      // Send the transaction
+      // ✅ Don't set recentBlockhash or feePayer manually
       const signature = await sendTransaction(transaction, connection);
 
       // Confirm the transaction
-      await connection.confirmTransaction({ signature, blockhash });
+      await connection.confirmTransaction(signature, 'confirmed');
 
       setTransactionStatus(`Transaction successful! Signature: ${signature}`);
       console.log('Transaction successful! Signature:', signature);
