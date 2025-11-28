@@ -65,12 +65,15 @@ export default function WalletButton() {
     setTransactionStatus('Sending SOL...');
 
     try {
+      setTransactionStatus('Sending SOL...', 'info');
       const connection = new Connection(
         'https://api.devnet.solana.com',
         'confirmed'
       );
 
-      const transaction = new Transaction().add(
+      // const recipientPublicKey = new PublicKey(recipientAddress);
+
+      const tx = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
           toPubkey: recipientPublicKey,
@@ -78,18 +81,17 @@ export default function WalletButton() {
         })
       );
 
-      // Don't manually set blockhash or feePayer
-      const signature = await sendTransaction(transaction, connection);
-
+      const signature = await sendTransaction(tx, connection);
       await connection.confirmTransaction(signature, 'confirmed');
-
       setTransactionStatus(` Transaction successful! Signature: ${signature}`);
       console.log('Transaction successful! Signature:', signature);
       setRecipientAddress('');
       setSolAmount('');
     } catch (error) {
-      setTransactionStatus(` Transaction failed: ${error.message}`);
       console.error('Transaction failed:', error);
+      setTransactionStatus('Purchase failed: Try again later');
+    } finally {
+      // setSending(false);
     }
   }, [publicKey, recipientAddress, solAmount, sendTransaction]);
 

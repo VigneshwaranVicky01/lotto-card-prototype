@@ -22,7 +22,7 @@ import {
 const receiverAddress = '9NQ9MgmpVe1wrzn5WvXdrxapChTeoQtgbSkHgNpVqRpT'; // Replace with your wallet address
 
 const WALLET_LIST = [
-  { name: 'Phantom', key: 'phantom', providerPath: 'phantom.solana' },
+  { name: 'Phantom', key: 'phantom', providerPath: 'phantom' },
   { name: 'Solflare', key: 'solflare', providerPath: 'solflare' },
   { name: 'Backpack', key: 'backpack', providerPath: 'backpack' },
 ];

@@ -55,7 +55,7 @@ const data = [
   },
   {
     id: 6,
-    title: 'Goldline Tickets',
+    title: 'Gold line Tickets',
     details: 'Draw – 7 PM',
     number: ['F', 'A', '3', 'B', '5', '0'],
     buy: 6,
@@ -63,7 +63,7 @@ const data = [
   },
   {
     id: 7,
-    title: 'Goldline Tickets',
+    title: 'Gold line Tickets',
     details: 'Draw – 9 PM',
     number: ['F', 'A', '3', 'B', '5', '0'],
     buy: 10,

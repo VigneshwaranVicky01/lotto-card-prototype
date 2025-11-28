@@ -142,7 +142,7 @@ const LottoCard1 = ({
       </div>
 
       <div className='ticket2-footer'>
-        Draw: {date} • Ticket ID: {ticketId}
+        Draw: {date} • Ticket ID1: {ticketId}
       </div>
     </div>
   );
