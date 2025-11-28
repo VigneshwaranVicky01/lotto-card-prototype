@@ -62,18 +62,22 @@ export default function WalletButton() {
       return;
     }
 
-    setTransactionStatus('Sending SOL...');
+    setTransactionStatus('Sending SOL...', 'info');
 
     try {
-      setTransactionStatus('Sending SOL...', 'info');
       const connection = new Connection(
         'https://api.devnet.solana.com',
         'confirmed'
       );
 
-      // const recipientPublicKey = new PublicKey(recipientAddress);
+      // Get the latest blockhash with a longer expiry
+      const { blockhash, lastValidBlockHeight } =
+        await connection.getLatestBlockhash('finalized');
 
-      const tx = new Transaction().add(
+      const tx = new Transaction({
+        feePayer: publicKey,
+        recentBlockhash: blockhash,
+      }).add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
           toPubkey: recipientPublicKey,
@@ -81,17 +85,33 @@ export default function WalletButton() {
         })
       );
 
-      const signature = await sendTransaction(tx, connection);
-      await connection.confirmTransaction(signature, 'confirmed');
-      setTransactionStatus(` Transaction successful! Signature: ${signature}`);
+      // Send transaction and wait for confirmation with the blockhash info
+      const signature = await sendTransaction(tx, connection, {
+        skipPreflight: false,
+        preflightCommitment: 'finalized',
+      });
+
+      // Confirm with blockhash context to prevent timeout
+      const confirmation = await connection.confirmTransaction(
+        {
+          signature,
+          blockhash,
+          lastValidBlockHeight,
+        },
+        'confirmed'
+      );
+
+      if (confirmation.value.err) {
+        throw new Error('Transaction failed to confirm');
+      }
+
+      setTransactionStatus(`Transaction successful! Signature: ${signature}`);
       console.log('Transaction successful! Signature:', signature);
       setRecipientAddress('');
       setSolAmount('');
     } catch (error) {
       console.error('Transaction failed:', error);
       setTransactionStatus('Purchase failed: Try again later');
-    } finally {
-      // setSending(false);
     }
   }, [publicKey, recipientAddress, solAmount, sendTransaction]);
 

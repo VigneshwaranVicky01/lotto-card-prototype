@@ -29,6 +29,7 @@ import Purchased from './pages/Purchased';
 import Test from './Test.jsx';
 import { SolanaProvider } from './provider/solana.jsx';
 import Sol from './pages/Sol.jsx';
+import WalletButton from './components/WalletButton.jsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext();
@@ -132,6 +133,7 @@ function App() {
           {/* <WalletMultiButton /> */}
           <Header />
           <Box>
+            <WalletButton />
             <Routes>
               <Route
                 path='/*'
